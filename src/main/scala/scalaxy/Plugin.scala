@@ -49,6 +49,7 @@ object Plugin extends sbt.Plugin {
 
 	lazy val scalaxySettings = Seq(
 	  scalaxyVersion := "0.3-SNAPSHOT",
+	  autoCompilets := false,
 	  autoCompilerPlugins <<= autoCompilerPlugins or autoCompilets,
 	  resolvers += Resolver.sonatypeRepo("snapshots"),
 	  libraryDependencies <+= scalaxyVersion(sv => compilerPlugin("com.nativelibs4java" %% "scalaxy-plugin" % sv)),
