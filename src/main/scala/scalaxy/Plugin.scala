@@ -48,8 +48,9 @@ object Plugin extends sbt.Plugin {
     )
 
 	lazy val scalaxySettings = Seq(
-	  scalaxyVersion := "0.3-SNAPSHOT", // TODO write to resources during build of scalaxy
+	  scalaxyVersion := "0.3-SNAPSHOT",
 	  autoCompilerPlugins <<= autoCompilerPlugins or autoCompilets,
+	  resolvers += Resolver.sonatypeRepo("snapshots"),
 	  libraryDependencies <+= scalaxyVersion(sv => compilerPlugin("com.nativelibs4java" %% "scalaxy-plugin" % sv)),
 		scalacOptions <<= (scalacOptions, autoCompilets, dependencyClasspath in Compile, update) map { (options, autoC, deps, report) =>
 			options ++ getCompilets(report, deps.files, autoC).map("-Xplugin:" + _.getAbsolutePath)
