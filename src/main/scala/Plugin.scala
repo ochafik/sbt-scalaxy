@@ -7,15 +7,9 @@ import scala.collection.mutable
 import scala.io.Source
 import Project.Initialize
 
-/*
-autoCompilets := true
-
-addCompilet("com.nativelibs4java" %% "custom-compilets-example" % "1.0-SNAPSHOT")
-
-scalaxySettings
-*/
 object Plugin extends sbt.Plugin {
   val autoCompilets = SettingKey[Boolean]("autoCompilets", "Whether compilets should be automatically detected in library dependencies.")
+  val scalaxyCompilets = SettingKey[Boolean]("scalaxyCompilets", "Whether this project defines compilets, which means it needs Scalaxy compile and test dependencies")
   val scalaxyVersion = SettingKey[String]("scalaxyVersion", "Version of Scalaxy to use.")
 	
 	def findCompilets(classpath: Seq[File]): Seq[File] = {
@@ -47,14 +41,31 @@ object Plugin extends sbt.Plugin {
       (if (auto) deps else Seq())
     )
 
-	lazy val scalaxySettings = Seq(
+  override lazy val settings = Seq(
 	  scalaxyVersion := "0.3-SNAPSHOT",
+	  scalaxyCompilets := false,
 	  autoCompilets := false,
 	  autoCompilerPlugins <<= autoCompilerPlugins or autoCompilets,
+	  libraryDependencies <++= scalaxyCompilets { sc =>
+	    if (sc)
+	      Seq(
+	        "com.nativelibs4java" %% "scalaxy-api" % "0.3-SNAPSHOT",
+	        "com.nativelibs4java" %% "scalaxy-plugin" % "0.3-SNAPSHOT" % "test" classifier("test"),
+          "com.nativelibs4java" %% "scalaxy-plugin" % "0.3-SNAPSHOT" % "test",
+          "junit" % "junit" % "4.10" % "test",
+          "com.novocode" % "junit-interface" % "0.8" % "test")
+      else
+        Nil
+	  },
 	  resolvers += Resolver.sonatypeRepo("snapshots"),
-	  libraryDependencies <+= scalaxyVersion(sv => compilerPlugin("com.nativelibs4java" %% "scalaxy-plugin" % sv)),
-		scalacOptions <<= (scalacOptions, autoCompilets, dependencyClasspath in Compile, update) map { (options, autoC, deps, report) =>
-			options ++ getCompilets(report, deps.files, autoC).map("-Xplugin:" + _.getAbsolutePath)
+	  libraryDependencies <++= (scalaxyVersion, autoCompilets) { (sv, autoC) =>
+	    if (autoC)//getCompilets(report, deps.files, autoC).isEmpty)
+	      Seq(compilerPlugin("com.nativelibs4java" %% "scalaxy-plugin" % sv classifier("assembly")))
+	    else
+	      Nil
+	  },
+		scalacOptions <++= (autoCompilets, dependencyClasspath in Compile, update) map { (autoC, deps, report) =>
+			getCompilets(report, deps.files, autoC).map("-Xplugin:" + _.getAbsolutePath)
 		}
 	)
 }

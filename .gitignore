@@ -18,3 +18,5 @@ project/plugins/project/
 *.scala~
 
 project/.DS_Store
+
+.DS_Store

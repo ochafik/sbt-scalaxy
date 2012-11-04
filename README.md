@@ -10,13 +10,15 @@ If you're happily using [paulp's sbt script](https://github.com/paulp/sbt-extras
 
     sbt.version=0.12.1
 
-Put the following in `project/plugins.sbt`:
+Put the following in `project/plugins.sbt` (or in `~/.sbt/plugins/build.sbt` for global setup):
 
     resolvers += Resolver.sonatypeRepo("snapshots")
     
     addSbtPlugin("com.nativelibs4java" % "sbt-scalaxy" % "0.3-SNAPSHOT")
 
-And the following in `build.sbt`:
+## Using compilets
+
+Put the following in `build.sbt`:
 
 	scalaVersion := "2.10.0-RC1"
 
@@ -30,4 +32,14 @@ And the following in `build.sbt`:
 	// Enable Scalaxy's basic loop & numerics rewrites.
 	addDefaultCompilets()
 	
-	scalaxySettings
+## Defining compilets
+
+Put the following in `build.sbt`:
+
+	scalaVersion := "2.10.0-RC1"
+
+	// Will bring compile and test dependencies to define and test compilets.
+	scalaxyCompilets := true
+	
+See a full example in [Scalaxy/Examples/CustomCompilets](https://github.com/ochafik/Scalaxy/tree/master/Examples/CustomCompilets).
+
