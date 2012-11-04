@@ -32,6 +32,8 @@ Put the following in `build.sbt`:
 	// Enable Scalaxy's basic loop & numerics rewrites.
 	addDefaultCompilets()
 	
+See a full example in [Scalaxy/Examples/CustomCompilets](https://github.com/ochafik/Scalaxy/tree/master/Examples/UsageWithSbtPlugin).
+	
 ## Defining compilets
 
 Put the following in `build.sbt`:
