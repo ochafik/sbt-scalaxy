@@ -1,4 +1,4 @@
-//package scalaxy
+package scalaxy
 
 import sbt._
 import Keys._
