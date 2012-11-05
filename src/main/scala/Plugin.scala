@@ -11,6 +11,8 @@ object Plugin extends sbt.Plugin {
   val autoCompilets = SettingKey[Boolean]("autoCompilets", "Whether compilets should be automatically detected in library dependencies.")
   val scalaxyCompilets = SettingKey[Boolean]("scalaxyCompilets", "Whether this project defines compilets, which means it needs Scalaxy compile and test dependencies")
   val scalaxyVersion = SettingKey[String]("scalaxyVersion", "Version of Scalaxy to use.")
+  val junitVersion = SettingKey[String]("junitVersion", "Version of JUnit to use.")
+  val junitInterfaceVersion = SettingKey[String]("junitInterfaceVersion", "Version of JUnit interface to use.")
   
   def findCompilets(classpath: Seq[File]): Seq[File] = {
     for (file <- classpath) yield {
@@ -44,16 +46,18 @@ object Plugin extends sbt.Plugin {
   override lazy val settings = Seq(
     scalaxyVersion := "0.3-SNAPSHOT",
     scalaxyCompilets := false,
+    junitVersion := "4.10",
+    junitInterfaceVersion := "0.8",
     autoCompilets := false,
     autoCompilerPlugins <<= autoCompilerPlugins or autoCompilets,
-    libraryDependencies <++= scalaxyCompilets { sc =>
+    libraryDependencies <++= (scalaxyVersion, scalaxyCompilets, junitVersion, junitInterfaceVersion) { (sv, sc, jv, jiv) =>
       if (sc)
         Seq(
-          "com.nativelibs4java" %% "scalaxy-api" % "0.3-SNAPSHOT",
-          "com.nativelibs4java" %% "scalaxy-plugin" % "0.3-SNAPSHOT" % "test" classifier("test"),
-          "com.nativelibs4java" %% "scalaxy-plugin" % "0.3-SNAPSHOT" % "test",
-          "junit" % "junit" % "4.10" % "test",
-          "com.novocode" % "junit-interface" % "0.8" % "test")
+          "com.nativelibs4java" %% "scalaxy-api" % sv,
+          "com.nativelibs4java" %% "scalaxy-plugin" % sv % "test" classifier("test"),
+          "com.nativelibs4java" %% "scalaxy-plugin" % sv % "test",
+          "junit" % "junit" % jv % "test",
+          "com.novocode" % "junit-interface" % jiv % "test")
       else
         Nil
     },
