@@ -22,8 +22,8 @@ pomIncludeRepository := { _ => false }
 
 pomExtra := (
   <scm>
-    <url>git@github.com:ochafik/Scalaxy.git</url>
-    <connection>scm:git:git@github.com:ochafik/Scalaxy.git</connection>
+    <url>git@github.com:ochafik/sbt-scalaxy.git</url>
+    <connection>scm:git:git@github.com:ochafik/sbt-scalaxy.git</connection>
   </scm>
   <developers>
     <developer>
