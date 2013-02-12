@@ -35,7 +35,7 @@ object Plugin extends sbt.Plugin {
     addCompilerPlugin(dependency)
     
   def addDefaultCompilets(): Setting[Seq[ModuleID]] =
-    libraryDependencies <+= scalaxyVersion(sv => compilerPlugin("com.nativelibs4java" %% "scalaxy-compilets" % sv))
+    libraryDependencies <+= scalaxyVersion(sv => compilerPlugin("com.nativelibs4java" %% "scalaxy-default-compilets" % sv))
     
   def getCompilets(report: UpdateReport, deps: Seq[File], auto: Boolean) =
     findCompilets(
@@ -53,9 +53,9 @@ object Plugin extends sbt.Plugin {
     libraryDependencies <++= (scalaxyVersion, scalaxyCompilets, junitVersion, junitInterfaceVersion) { (sv, sc, jv, jiv) =>
       if (sc)
         Seq(
-          "com.nativelibs4java" %% "scalaxy-api" % sv,
-          "com.nativelibs4java" %% "scalaxy-plugin" % sv % "test" classifier("test"),
-          "com.nativelibs4java" %% "scalaxy-plugin" % sv % "test",
+          "com.nativelibs4java" %% "scalaxy-compilets-api" % sv,
+          "com.nativelibs4java" %% "scalaxy-compilets-plugin" % sv % "test" classifier("test"),
+          "com.nativelibs4java" %% "scalaxy-compilets-plugin" % sv % "test",
           "junit" % "junit" % jv % "test",
           "com.novocode" % "junit-interface" % jiv % "test")
       else
@@ -64,7 +64,7 @@ object Plugin extends sbt.Plugin {
     resolvers += Resolver.sonatypeRepo("snapshots"),
     libraryDependencies <++= (scalaxyVersion, autoCompilets) { (sv, autoC) =>
       if (autoC)//getCompilets(report, deps.files, autoC).isEmpty)
-        Seq(compilerPlugin("com.nativelibs4java" %% "scalaxy-plugin" % sv classifier("assembly")))
+        Seq(compilerPlugin("com.nativelibs4java" %% "scalaxy-compilets-plugin" % sv classifier("assembly")))
       else
         Nil
     },
