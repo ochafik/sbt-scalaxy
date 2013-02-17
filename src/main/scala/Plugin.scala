@@ -20,7 +20,7 @@ object Plugin extends sbt.Plugin {
       try {
         val zf = new ZipFile(file)
         try {
-          if (zf.getEntry("META-INF/services/scalaxy.Compilet") != null)
+          if (zf.getEntry("META-INF/services/scalaxy.compilets.Compilet") != null)
             Some(file)
           else
             None
@@ -64,12 +64,12 @@ object Plugin extends sbt.Plugin {
     resolvers += Resolver.sonatypeRepo("snapshots"),
     libraryDependencies <++= (scalaxyVersion, autoCompilets) { (sv, autoC) =>
       if (autoC)//getCompilets(report, deps.files, autoC).isEmpty)
-        Seq(compilerPlugin("com.nativelibs4java" %% "scalaxy-compilets-plugin" % sv classifier("assembly")))
+        Seq(compilerPlugin("com.nativelibs4java" %% "scalaxy-compilets-plugin" % sv/* classifier("assembly")*/))
       else
         Nil
     },
-    scalacOptions <++= (autoCompilets, dependencyClasspath in Compile, update) map { (autoC, deps, report) =>
+    scalacOptions <++= (autoCompilets, dependencyClasspath in Compile, update) map { (autoC, deps, report) => {
       getCompilets(report, deps.files, autoC).map("-Xplugin:" + _.getAbsolutePath)
-    }
+    }}
   )
 }
